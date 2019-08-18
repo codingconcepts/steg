@@ -44,7 +44,7 @@ func main() {
 			pub := getInput("Enter public message: ")
 
 			pt := decode(pub)
-			fmt.Println(pt)
+			fmt.Print(pt)
 		},
 	}
 
@@ -67,12 +67,12 @@ func encode(pub, pri string) string {
 	bin := strToBin(pri)
 	pri = conceal(bin)
 
-	return inject(pri, pub)
+	return strings.Trim(inject(pri, pub), "\n")
 }
 
 func decode(ct string) string {
 	ct = stripper.ReplaceAllString(ct, "")
-	return binToStr(reveal(ct))
+	return strings.Trim(binToStr(reveal(ct)), "\n")
 }
 
 func strToBin(s string) string {
