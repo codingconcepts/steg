@@ -1,5 +1,7 @@
 # conceal
-A simple steganographic CLI to hide messages inspired by https://neatnik.net/steganographr/?
+A simple steganographic CLI that uses zero-width characters to hide messages.
+
+Inspired by https://neatnik.net/steganographr/?
 
 ## Installation
 
