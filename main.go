@@ -14,7 +14,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var stripper = regexp.MustCompile("[^\xE2\x81\xA0|\xE2\x80\x8B|\xE2\x80\x8C]+")
+const (
+	zwS  = "\u200B" // Zero-width space
+	zwNJ = "\u200C" // Zero-width non-joiner
+	zwJ  = "\u2060" // Zero-width joiner
+)
+
+var stripper = regexp.MustCompile(fmt.Sprintf("[^%s|%s|%s]+", zwS, zwNJ, zwJ))
 
 func main() {
 	concealCmd := &cobra.Command{
@@ -99,17 +105,17 @@ func inject(s, into string) string {
 }
 
 func conceal(s string) string {
-	s = strings.Replace(s, " ", "\xE2\x81\xA0", -1)
-	s = strings.Replace(s, "0", "\xE2\x80\x8B", -1)
-	s = strings.Replace(s, "1", "\xE2\x80\x8C", -1)
+	s = strings.Replace(s, " ", zwS, -1)
+	s = strings.Replace(s, "0", zwNJ, -1)
+	s = strings.Replace(s, "1", zwJ, -1)
 
 	return s
 }
 
 func reveal(s string) string {
-	s = strings.Replace(s, "\xE2\x81\xA0", " ", -1)
-	s = strings.Replace(s, "\xE2\x80\x8B", "0", -1)
-	s = strings.Replace(s, "\xE2\x80\x8C", "1", -1)
+	s = strings.Replace(s, zwS, " ", -1)
+	s = strings.Replace(s, zwNJ, "0", -1)
+	s = strings.Replace(s, zwJ, "1", -1)
 
 	return s
 }
