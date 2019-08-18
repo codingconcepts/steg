@@ -26,26 +26,13 @@ func main() {
 	concealCmd := &cobra.Command{
 		Use:   "conceal",
 		Short: "Conceals a message into another string and copies the output to the clipboard",
-		Run: func(_ *cobra.Command, args []string) {
-			pub := getInput("Enter public message: ")
-			pri := getInput("Enter private message: ")
-
-			ct := encode(pub, pri)
-			if err := clipboard.WriteAll(ct); err != nil {
-				log.Fatalf("error copying to clipboard: %v", err)
-			}
-		},
+		Run:   runConceal,
 	}
 
 	revealCmd := &cobra.Command{
 		Use:   "reveal",
 		Short: "Reveals a hidden message and prints it to the console",
-		Run: func(_ *cobra.Command, args []string) {
-			pub := getInput("Enter public message: ")
-
-			pt := decode(pub)
-			fmt.Print(pt)
-		},
+		Run:   runReveal,
 	}
 
 	rootCmd := &cobra.Command{}
@@ -56,11 +43,21 @@ func main() {
 	}
 }
 
-func getInput(prompt string) string {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print(prompt)
-	text, _ := reader.ReadString('\n')
-	return text
+func runConceal(_ *cobra.Command, args []string) {
+	pub := getInput("Enter public message: ")
+	pri := getInput("Enter private message: ")
+
+	ct := encode(pub, pri)
+	if err := clipboard.WriteAll(ct); err != nil {
+		log.Fatalf("error copying to clipboard: %v", err)
+	}
+}
+
+func runReveal(_ *cobra.Command, args []string) {
+	pub := getInput("Enter public message: ")
+
+	pt := decode(pub)
+	fmt.Print(pt)
 }
 
 func encode(pub, pri string) string {
@@ -118,4 +115,11 @@ func reveal(s string) string {
 	s = strings.Replace(s, zwJ, "1", -1)
 
 	return s
+}
+
+func getInput(prompt string) string {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print(prompt)
+	text, _ := reader.ReadString('\n')
+	return text
 }
